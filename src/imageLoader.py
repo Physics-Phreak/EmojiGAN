@@ -1,6 +1,7 @@
 import cv2
 import torch
 from torch.utils.data import Dataset
+import numpy as np
 
 import os
 import dotenv
@@ -23,6 +24,7 @@ class ImageLoader(Dataset):
             index = index.tolist()
 
         img = self.processImg(index)
+        img = img.astype(np.float32)
 
         if self.transform:
             img = self.transform(img)
@@ -30,7 +32,8 @@ class ImageLoader(Dataset):
         return img
 
     def processImg(self, index):
-        img = cv2.imread(self.path + "/" + self.imgList[index])
+        img = cv2.imread(self.path + "/" + self.imgList[index], cv2.IMREAD_GRAYSCALE)
+        img = cv2.resize(img, (128, 128))
         return img
 
     def getImgList(self):
